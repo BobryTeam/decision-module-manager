@@ -14,13 +14,16 @@ class DecisionModuleManager:
         '''
         Отправление сообщения DM AI об анализе тренд даты
         '''
+        pass
 
     def send_scale_data_to_k8s():
         '''
         Отправление информации о скалировании в кубернетес
         '''
+        pass
     
     def get_event():
         '''
         Получение инфы из KafkaConsumer
         '''
+        pass
