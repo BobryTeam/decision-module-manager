@@ -35,8 +35,8 @@ class DecisionModuleManager:
         '''
         while self.running.is_set() or not self.event_queue.empty():
             if self.event_queue.empty(): continue
-            event = self.event_queue.get()
-            self.handle_event(event)
+            event_thread = Thread(target=self.handle_event, args=((self.event_queue.get()),))
+            event_thread.start()
 
     def handle_event(self, event: Event):
         '''
