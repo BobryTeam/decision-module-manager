@@ -51,9 +51,11 @@ class DecisionModuleManager:
                 pass
 
     def handle_event_trend_data(self, trend_data: TrendData):
+        # send trend data to DM AI
         print(f'Got trend data: {trend_data}')
 
     def handle_event_scalek8s(self, scale_data: ScaleData):
+        # send replica count request to k8s
         print(f'Got scale data: {scale_data}')
 
     def stop(self):
