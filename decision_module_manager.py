@@ -58,3 +58,33 @@ class DecisionModuleManager:
 
     def stop(self):
         self.running.clear()
+
+
+if __name__ == '__main__':
+    # shared event queue
+    event_queue = Queue()
+
+    kafka_event_reader = KafkaEventReader(
+        KafkaConsumer(
+            'dmm',
+            bootstrap_servers='localhost:9092',
+            auto_offset_reset='latest',
+            enable_auto_commit=True,
+        ),
+        event_queue
+    )
+
+    dmm = DecisionModuleManager(event_queue)
+
+    kafka_event_writer = KafkaEventWriter(
+        KafkaProducer(
+            bootstrap_servers='localhost:9092'
+        ),
+        'dmm'
+    )
+
+    for i in range(5):
+        kafka_event_writer.send_event(Event(EventType.TrendData, f'some bullshit {i}'))
+        time.sleep(2)
+
+    kafka_event_writer.release()
