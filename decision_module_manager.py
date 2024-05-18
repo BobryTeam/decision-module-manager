@@ -10,8 +10,6 @@ from trend_data.trend_data import TrendData
 from scale_data.scale_data import ScaleData
 
 
-import time
-
 
 class DecisionModuleManager:
     '''
