@@ -7,6 +7,6 @@ name = "decision_module_manager"
 version = "2024.18.05"
 readme = "README.md"
 dependencies = [
-  "events @ git+https://github.com/BobryTeam/events.git#feature/pyproject@events",
+  "events @ git+https://github.com/BobryTeam/events.git#feature/pyproject",
 ]
 requires-python = ">=3.10"
