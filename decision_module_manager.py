@@ -1,6 +1,5 @@
 from typing import Dict
 
-import threading
 from threading import Thread
 
 import kubernetes
