@@ -1,4 +1,5 @@
-import threading
+from typing import Dict
+
 from threading import Thread
 
 import kubernetes
@@ -9,58 +10,53 @@ from events.kafka_event import *
 from trend_data.trend_data import TrendData
 from scale_data.scale_data import ScaleData
 
+from microservice.microservice import Microservice
 
 
-class DecisionModuleManager:
+class DecisionModuleManager(Microservice):
     '''
     Класс отвечающий за представление DM Manager
     Его задача -- отправлять запрос на анализ тренда в DM AI и отправлять запрос на скалирование в k8s
     '''
 
-    def __init__(self, target_deployment: str, target_namespace: str, dm_ai_event_writer: KafkaEventWriter, event_queue: Queue):
+    def __init__(self, event_queue: Queue, writers: Dict[str, KafkaEventWriter], target_deployment: str, target_namespace: str):
         '''
-        Инициализация класса
+        Инициализация класса:
+        - `target_deployment` - название пода, который мы скалируем
+        - `target_namespace` - неймспейс пода, который мы скалируем
+        Поля класса:
+        - `self.target_deployment` - название пода, который мы скалируем
+        - `self.target_namespace` - неймспейс пода, который мы скалируем
+        - `self.k8s_api` - доступ в апи кубов
         '''
-
-        self.event_queue = event_queue
 
         kubernetes.config.load_incluster_config()
         self.target_deployment = target_deployment
         self.target_namespace = target_namespace
         self.k8s_api = kubernetes.client.AppsV1Api()
 
-        self.dm_ai_event_writer = dm_ai_event_writer
-
-        self.running = threading.Event()
-        self.running.set()
-
-        self.running_thread = Thread(target=self.run)
-        self.running_thread.start()
-
-    def run(self):
-        '''
-        Принятие событий из очереди 
-        '''
-        while self.running.is_set() or not self.event_queue.empty():
-            if self.event_queue.empty(): continue
-            event_thread = Thread(target=self.handle_event, args=((self.event_queue.get()),))
-            event_thread.start()
+        return super().__init__(event_queue, writers)
 
     def handle_event(self, event: Event):
         '''
-        Обработка ивентов, здесь находится основная логика микросервиса
+        Обработка ивентов
         '''
+        target_function = None
+
         match event.type:
             case EventType.TrendData:
-                self.handle_event_trend_data(event.data)
+                target_function = self.handle_event_trend_data
             case EventType.TrendAnalyseResult:
-                self.handle_event_trend_analyse_result(event.data)
+                target_function = self.handle_event_trend_analyse_result
             case _:
                 pass
 
+        if target_function is not None:
+            Thread(target=target_function, args=(event.data,)).start()
+
     def handle_event_trend_data(self, trend_data: TrendData):
         # send trend data to DM AI
-        self.dm_ai_event_writer.send_event(Event(EventType.TrendData, trend_data))
+        self.writers['dmai'].send_event(Event(EventType.TrendData, trend_data))
 
     def handle_event_trend_analyse_result(self, scale_data: ScaleData):
         # set new replica count to the target deployment
@@ -71,6 +67,3 @@ class DecisionModuleManager:
             namespace=self.target_namespace,
             body=deployment
         )
-
-    def stop(self):
-        self.running.clear()
