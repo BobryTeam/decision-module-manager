@@ -35,7 +35,7 @@ class DecisionModuleManager(Microservice):
         self.target_namespace = target_namespace
         self.k8s_api = kubernetes.client.AppsV1Api()
 
-        super().__init__(event_queue, writers)
+        return super().__init__(event_queue, writers)
 
     def handle_event(self, event: Event):
         '''
