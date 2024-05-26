@@ -1,12 +1,12 @@
 [build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
 
-[project]
+[tool.poetry]
 name = "decision_module_manager"
-version = "2024.18.05"
+version = "2024.26.05"
 readme = "README.md"
-dependencies = [
-  "events @ git+https://github.com/BobryTeam/events.git@feature/pyproject",
-]
-requires-python = ">=3.10"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+events = {git = "https://github.com/BobryTeam/events.git"}
