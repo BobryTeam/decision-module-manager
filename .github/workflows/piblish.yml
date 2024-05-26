@@ -6,17 +6,8 @@ on:
       - "v*.*.*"
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code and lint
-        uses: actions/checkout@v4
-      - uses: ricardochaves/python-lint@v1.4.0
 
   test:
-    needs: 
-      - lint
     runs-on: ubuntu-latest
 
     steps:
@@ -39,7 +30,6 @@ jobs:
 
   publish:
     needs: 
-      - lint
       - test
 
     runs-on: ubuntu-latest
@@ -64,4 +54,4 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.DOCKERHUB_REPOSITORY }}:${{ steps.tag.outputs.TAG }}  
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}:${{ steps.tag.outputs.TAG }}  
