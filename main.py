@@ -1,9 +1,12 @@
+import os
+from queue import Queue
+
 from decision_module_manager import DecisionModuleManager
 
-from events.kafka_event import *
-from events.event import *
+from events import *
 
-import os
+from kafka import KafkaConsumer, KafkaProducer
+
 
 # put the values in a k8s manifest
 kafka_bootstrap_server = os.environ.get('KAFKA_BOOTSTRAP_SERVER')
