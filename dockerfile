@@ -10,4 +10,4 @@ RUN python -m pip install --no-cache-dir poetry \
 
 COPY . .
 
-CMD [ "poetry", "run", "python", "./decision_module_manager.py" ]
+CMD [ "poetry", "run", "python", "./main.py" ]

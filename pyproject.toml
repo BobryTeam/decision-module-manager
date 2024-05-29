@@ -11,4 +11,5 @@ authors = ["John Smith <john@example.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
+kubernetes-py = "^1.10.14"
 events = {git = "https://github.com/BobryTeam/events.git", branch = "feature/pyproject"}
