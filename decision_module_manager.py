@@ -1,6 +1,7 @@
 from threading import Thread
 
 from event import *
+from kafka_event import *
 
 
 class DecisionModuleManager:
