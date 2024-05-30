@@ -10,6 +10,8 @@ from trend_data import TrendData
 from scale_data import ScaleData
 from microservice import Microservice
 
+import math
+
 
 class DecisionModuleManager(Microservice):
     '''
@@ -59,7 +61,7 @@ class DecisionModuleManager(Microservice):
     def handle_event_trend_analyse_result(self, scale_data: ScaleData):
         # set new replica count to the target deployment
         deployment = self.k8s_api.read_namespaced_deployment(self.target_deployment, self.target_namespace)
-        deployment.spec.replicas = scale_data.replica_count
+        deployment.spec.replicas = max(math.ceil(deployment.spec.replicas * scale_data.replica_coefficient), 1)
         _api_response = self.k8s_api.patch_namespaced_deployment(
             name=self.target_deployment,
             namespace=self.target_namespace,
