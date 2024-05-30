@@ -28,7 +28,7 @@ class DecisionModuleManager(Microservice):
         - `self.k8s_api` - доступ в апи кубов
         '''
 
-        kubernetes.config.load_incluster_config()
+        kubernetes.config.load_kube_config()
         self.target_deployment = target_deployment
         self.target_namespace = target_namespace
         self.k8s_api = kubernetes.client.AppsV1Api()
